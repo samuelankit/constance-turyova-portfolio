@@ -1,0 +1,1 @@
+- [Portfolio CMS conventions](portfolio-cms.md) — admin password constance2024; uploads via custom /api/upload (not OpenAPI spec); zod/v4 not available in api-server package

@@ -1,22 +1,27 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Constance Turyova Portfolio CMS API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: slides
+    description: Homepage slider images
+  - name: blog
+    description: Blog posts
+  - name: settings
+    description: Site settings
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,13 +29,353 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /slides:
+    get:
+      operationId: listSlides
+      tags: [slides]
+      summary: List all slider images
+      responses:
+        "200":
+          description: List of slides
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Slide"
+    post:
+      operationId: createSlide
+      tags: [slides]
+      summary: Add a new slide image
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SlideInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Slide"
+
+  /slides/{id}:
+    delete:
+      operationId: deleteSlide
+      tags: [slides]
+      summary: Delete a slide
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+    patch:
+      operationId: updateSlide
+      tags: [slides]
+      summary: Update slide order or alt text
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SlideUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Slide"
+
+  /blog:
+    get:
+      operationId: listBlogPosts
+      tags: [blog]
+      summary: List all blog posts
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Blog post list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BlogPostList"
+    post:
+      operationId: createBlogPost
+      tags: [blog]
+      summary: Create a new blog post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BlogPostInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BlogPost"
+
+  /blog/{id}:
+    get:
+      operationId: getBlogPost
+      tags: [blog]
+      summary: Get single blog post
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Blog post
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BlogPost"
+        "404":
+          description: Not found
+
+    patch:
+      operationId: updateBlogPost
+      tags: [blog]
+      summary: Update a blog post
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BlogPostUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BlogPost"
+
+    delete:
+      operationId: deleteBlogPost
+      tags: [blog]
+      summary: Delete a blog post
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /settings:
+    get:
+      operationId: getSettings
+      tags: [settings]
+      summary: Get site settings
+      responses:
+        "200":
+          description: Settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SiteSettings"
+    put:
+      operationId: updateSettings
+      tags: [settings]
+      summary: Update site settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SiteSettingsInput"
+      responses:
+        "200":
+          description: Updated settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SiteSettings"
+
+
 components:
   schemas:
     HealthStatus:
       type: object
+      required: [status]
       properties:
         status:
           type: string
-      required:
-        - status
+
+    Slide:
+      type: object
+      required: [id, imageUrl, altText, sortOrder, createdAt]
+      properties:
+        id:
+          type: integer
+        imageUrl:
+          type: string
+        altText:
+          type: string
+        sortOrder:
+          type: integer
+        createdAt:
+          type: string
+
+    SlideInput:
+      type: object
+      required: [imageUrl]
+      properties:
+        imageUrl:
+          type: string
+        altText:
+          type: string
+        sortOrder:
+          type: integer
+
+    SlideUpdate:
+      type: object
+      properties:
+        imageUrl:
+          type: string
+        altText:
+          type: string
+        sortOrder:
+          type: integer
+
+    BlogPost:
+      type: object
+      required: [id, title, excerpt, content, published, createdAt, updatedAt]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        excerpt:
+          type: string
+        content:
+          type: string
+        imageUrl:
+          type: ["string", "null"]
+        published:
+          type: boolean
+        slug:
+          type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+
+    BlogPostInput:
+      type: object
+      required: [title, excerpt, content]
+      properties:
+        title:
+          type: string
+        excerpt:
+          type: string
+        content:
+          type: string
+        imageUrl:
+          type: string
+        published:
+          type: boolean
+        slug:
+          type: string
+
+    BlogPostUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        excerpt:
+          type: string
+        content:
+          type: string
+        imageUrl:
+          type: string
+        published:
+          type: boolean
+        slug:
+          type: string
+
+    BlogPostList:
+      type: object
+      required: [posts, total]
+      properties:
+        posts:
+          type: array
+          items:
+            $ref: "#/components/schemas/BlogPost"
+        total:
+          type: integer
+
+    SiteSettings:
+      type: object
+      required: [id, siteName, tagline, email, instagramUrl, metaDescription, metaKeywords, updatedAt]
+      properties:
+        id:
+          type: integer
+        siteName:
+          type: string
+        tagline:
+          type: string
+        email:
+          type: string
+        instagramUrl:
+          type: string
+        metaDescription:
+          type: string
+        metaKeywords:
+          type: string
+        updatedAt:
+          type: string
+
+    SiteSettingsInput:
+      type: object
+      properties:
+        siteName:
+          type: string
+        tagline:
+          type: string
+        email:
+          type: string
+        instagramUrl:
+          type: string
+        metaDescription:
+          type: string
+        metaKeywords:
+          type: string
 
