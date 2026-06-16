@@ -1,17 +1,26 @@
 Options -Indexes
 Options +FollowSymLinks
 
+# Prefer index.html over index.php for directory requests
+DirectoryIndex index.html index.php
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteBase /
 
-    # Allow real files and directories through
-    RewriteCond %{REQUEST_FILENAME} -f [OR]
-    RewriteCond %{REQUEST_FILENAME} -d
-    RewriteRule ^ - [L]
+    # Always serve index.html for the root (prevents WordPress index.php from loading)
+    RewriteRule ^$ index.html [L]
 
     # Route /api/* to the PHP router
     RewriteRule ^api/(.*)$ api/index.php [QSA,L]
+
+    # Allow real non-PHP files and directories through (assets, uploads, etc.)
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteCond %{REQUEST_FILENAME} !\.php$
+    RewriteRule ^ - [L]
+
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
 
     # React SPA — serve index.html for everything else
     RewriteRule ^ index.html [L]
