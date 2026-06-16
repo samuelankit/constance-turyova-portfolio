@@ -10,9 +10,13 @@ import {
 } from "@workspace/api-zod";
 const router: IRouter = Router();
 
+function serializeSlide(s: typeof slidesTable.$inferSelect) {
+  return { ...s, createdAt: s.createdAt instanceof Date ? s.createdAt.toISOString() : s.createdAt };
+}
+
 router.get("/slides", async (_req, res): Promise<void> => {
   const slides = await db.select().from(slidesTable).orderBy(slidesTable.sortOrder);
-  res.json(slides.map((s) => ListSlidesResponseItem.parse(s)));
+  res.json(slides.map((s) => ListSlidesResponseItem.parse(serializeSlide(s))));
 });
 
 router.post("/slides", async (req, res): Promise<void> => {
@@ -29,7 +33,7 @@ router.post("/slides", async (req, res): Promise<void> => {
       sortOrder: parsed.data.sortOrder ?? 0,
     })
     .returning();
-  res.status(201).json(ListSlidesResponseItem.parse(slide));
+  res.status(201).json(ListSlidesResponseItem.parse(serializeSlide(slide)));
 });
 
 router.delete("/slides/:id", async (req, res): Promise<void> => {
@@ -71,7 +75,7 @@ router.patch("/slides/:id", async (req, res): Promise<void> => {
     res.status(404).json({ error: "Slide not found" });
     return;
   }
-  res.json(ListSlidesResponseItem.parse(slide));
+  res.json(ListSlidesResponseItem.parse(serializeSlide(slide)));
 });
 
 export default router;
