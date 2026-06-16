@@ -1,10 +1,15 @@
 import { useState, useEffect, useCallback } from "react";
 
-interface SliderProps {
-  images: { imageUrl: string; altText: string }[];
+interface SlideImage {
+  imageUrl: string;
+  altText: string;
 }
 
-const FALLBACK = [
+interface SliderProps {
+  images: SlideImage[];
+}
+
+const FALLBACK: SlideImage[] = [
   { imageUrl: "/assets/images/slide-1-light.jpg", altText: "Performance" },
   { imageUrl: "/assets/images/slide-2-light.jpg", altText: "On Stage" },
   { imageUrl: "/assets/images/slide-3-light.jpg", altText: "Character Study" },
@@ -13,6 +18,27 @@ const FALLBACK = [
   { imageUrl: "/assets/images/slide-6-light.jpg", altText: "Screen" },
   { imageUrl: "/assets/images/slide-7-light.jpg", altText: "Storytelling" },
 ];
+
+/**
+ * Per-image mobile background-position overrides.
+ * Key is any unique substring of the imageUrl filename.
+ * Value is the CSS background-position for mobile portrait viewports.
+ * Defaults to "center top" if no match.
+ */
+const MOBILE_POSITIONS: Record<string, string> = {
+  "m1cd0azmg1": "right center",   // B&W portrait — face is on the right
+  "88s5p2k5g92": "center top",    // Snow/dagger — face centered, arms raised
+  "z5qvhb31gt9": "left center",   // Fire/book — subject is on the left
+  "9n61u2emiam": "center",        // Extra shot — use center
+  "bt49b1k8sri": "center",        // Extra shot — use center
+};
+
+function getMobilePosition(imageUrl: string): string {
+  for (const [key, pos] of Object.entries(MOBILE_POSITIONS)) {
+    if (imageUrl.includes(key)) return pos;
+  }
+  return "center top";
+}
 
 export default function Slider({ images }: SliderProps) {
   const slides = images.length > 0 ? images : FALLBACK;
@@ -37,7 +63,10 @@ export default function Slider({ images }: SliderProps) {
         <div
           key={i}
           className={`nk-slide${i === current ? " active" : ""}`}
-          style={{ backgroundImage: `url(${s.imageUrl})` }}
+          style={{
+            backgroundImage: `url(${s.imageUrl})`,
+            ["--slide-mobile-pos" as string]: getMobilePosition(s.imageUrl),
+          }}
           aria-label={s.altText}
           role="img"
         />
