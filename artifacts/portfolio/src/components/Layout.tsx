@@ -101,6 +101,13 @@ export default function Layout({
 
       {/* Nav overlay */}
       <nav className={`nk-navbar-overlay${navOpen ? " open" : ""}`} onClick={() => setNavOpen(false)}>
+        <button
+          className="nk-nav-close"
+          onClick={() => setNavOpen(false)}
+          aria-label="Close navigation"
+        >
+          ×
+        </button>
         <ul className="nk-nav-links" onClick={(e) => e.stopPropagation()}>
           {navLinks.map((l) => (
             <li key={l.href}>
