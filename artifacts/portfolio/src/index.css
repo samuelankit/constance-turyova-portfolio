@@ -838,9 +838,9 @@ body {
 
 /* ===== MOBILE ===== */
 @media (max-width: 768px) {
-  /* Focus the slider on the upper-right where the subject's face sits */
+  /* Per-slide mobile position set via --slide-mobile-pos CSS custom property */
   .nk-slide {
-    background-position: right top;
+    background-position: var(--slide-mobile-pos, center top);
   }
 
   .nk-layout-top-left { top: 20px; left: 20px; }
