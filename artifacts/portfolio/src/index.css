@@ -156,6 +156,10 @@ body {
   box-shadow: 0 0 4px rgba(0,0,0,0.6);
 }
 
+.nk-nav-toggle.open span {
+  background: var(--ink);
+  box-shadow: none;
+}
 .nk-nav-toggle.open span:nth-child(1) {
   transform: translateY(6.5px) rotate(45deg);
 }
