@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
+import Logo from "./Logo";
 
 interface LayoutProps {
   children?: React.ReactNode;
@@ -40,11 +41,8 @@ export default function Layout({
       <div className="nk-layout">
         {/* Top Left — Logo */}
         <div className="nk-layout-top-left">
-          <Link href="/" className="nk-logo">
-            <span>
-              <span className="nk-logo-text">Constance Turyova</span>
-              <span className="nk-logo-sub">Actor</span>
-            </span>
+          <Link href="/" className="nk-logo" style={{ lineHeight: 0 }}>
+            <Logo />
           </Link>
         </div>
 
