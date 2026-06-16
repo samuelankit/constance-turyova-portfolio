@@ -35,7 +35,6 @@ jobs:
       - name: Copy PHP backend into build output
         run: |
           cp php-site/.htaccess artifacts/portfolio/dist/public/.htaccess
-          cp php-site/config.php artifacts/portfolio/dist/public/config.php
           cp php-site/setup.php artifacts/portfolio/dist/public/setup.php
           mkdir -p artifacts/portfolio/dist/public/api
           cp php-site/api/db.php artifacts/portfolio/dist/public/api/db.php
@@ -54,3 +53,4 @@ jobs:
             **/.git*
             **/.git*/**
             **/node_modules/**
+            config.php
