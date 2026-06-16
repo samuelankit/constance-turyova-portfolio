@@ -834,11 +834,22 @@ body {
 
 /* ===== MOBILE ===== */
 @media (max-width: 768px) {
+  /* Focus the slider on the upper-right where the subject's face sits */
+  .nk-slide {
+    background-position: right top;
+  }
+
   .nk-layout-top-left { top: 20px; left: 20px; }
   .nk-layout-top-right { top: 20px; right: 20px; }
   .nk-layout-bottom-left { bottom: 20px; left: 20px; }
   .nk-layout-bottom-right { bottom: 20px; right: 20px; }
-  .nk-layout-bottom-center { bottom: 20px; }
+
+  /* Hide the email on mobile — too cramped alongside BLOG */
+  .nk-layout-bottom-center { display: none; }
+
+  /* Scale logo down a touch */
+  .nk-logo svg { width: 140px; height: auto; }
+
   .nk-content-panel { width: 100%; padding: 80px 24px 40px; }
   .nk-blog-panel { width: 100%; padding: 80px 24px 40px; }
   .nk-admin-body { padding: 24px 20px; }
