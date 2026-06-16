@@ -836,7 +836,7 @@ body {
 @media (max-width: 768px) {
   /* Focus the slider on the upper-right where the subject's face sits */
   .nk-slide {
-    background-position: center;
+    background-position: right top;
   }
 
   .nk-layout-top-left { top: 20px; left: 20px; }
