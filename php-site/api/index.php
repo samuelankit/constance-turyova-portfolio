@@ -75,21 +75,21 @@ json_error('Not found', 404);
 // ─────────────────────────────────────────────────────────────────────────────
 
 function handle_slides_list(): never {
-    $rows = get_db()->query('SELECT id, image_url AS imageUrl, title, created_at AS createdAt FROM slides ORDER BY created_at DESC')->fetchAll();
+    $rows = get_db()->query('SELECT id, image_url AS imageUrl, title AS altText, 0 AS sortOrder, created_at AS createdAt FROM slides ORDER BY created_at DESC')->fetchAll();
     json_response($rows);
 }
 
 function handle_slides_create(): never {
-    $body = get_json_body();
+    $body     = get_json_body();
     $imageUrl = trim($body['imageUrl'] ?? '');
-    $title    = trim($body['title'] ?? '');
+    $altText  = trim($body['altText'] ?? $body['title'] ?? '');
     if (!$imageUrl) json_error('imageUrl is required');
 
     $st = get_db()->prepare('INSERT INTO slides (image_url, title) VALUES (?, ?)');
-    $st->execute([$imageUrl, $title ?: null]);
+    $st->execute([$imageUrl, $altText ?: null]);
     $id = (int)get_db()->lastInsertId();
 
-    $row = get_db()->prepare('SELECT id, image_url AS imageUrl, title, created_at AS createdAt FROM slides WHERE id = ?');
+    $row = get_db()->prepare('SELECT id, image_url AS imageUrl, title AS altText, 0 AS sortOrder, created_at AS createdAt FROM slides WHERE id = ?');
     $row->execute([$id]);
     json_response($row->fetch(), 201);
 }
