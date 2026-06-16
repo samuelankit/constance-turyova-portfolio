@@ -110,12 +110,13 @@ body {
   border: none;
   cursor: pointer;
   padding: 4px;
-  color: var(--color-dark);
-  opacity: 0.5;
+  color: white;
+  opacity: 0.6;
   transition: opacity var(--transition);
   display: flex;
   align-items: center;
   justify-content: center;
+  filter: drop-shadow(0 0 3px rgba(0,0,0,0.5));
 }
 .nk-slider-nav-btn:hover { opacity: 1; }
 
@@ -129,10 +130,11 @@ body {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: var(--color-dark);
-  opacity: 0.3;
+  background: white;
+  opacity: 0.4;
   transition: opacity var(--transition);
   cursor: pointer;
+  box-shadow: 0 0 3px rgba(0,0,0,0.5);
 }
 .nk-dot.active { opacity: 1; }
 
@@ -149,8 +151,9 @@ body {
   display: block;
   width: 24px;
   height: 1.5px;
-  background: var(--color-dark);
+  background: white;
   transition: transform var(--transition), opacity var(--transition);
+  box-shadow: 0 0 4px rgba(0,0,0,0.6);
 }
 
 .nk-nav-toggle.open span:nth-child(1) {
@@ -204,16 +207,20 @@ body {
 .nk-nav-links a.active-link { color: var(--color-accent); }
 
 /* ===== BOTTOM NAV ITEMS ===== */
-.nk-bottom-nav a {
+.nk-bottom-nav a,
+.nk-bottom-nav button,
+.nk-bottom-nav span {
   font-size: 11px;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: var(--color-dark);
+  color: white;
   text-decoration: none;
   opacity: 0.7;
   transition: opacity var(--transition);
+  text-shadow: 0 0 6px rgba(0,0,0,0.7);
 }
-.nk-bottom-nav a:hover { opacity: 1; }
+.nk-bottom-nav a:hover,
+.nk-bottom-nav button:hover { opacity: 1; }
 
 /* ===== CONTENT PANEL ===== */
 .nk-content-panel {
