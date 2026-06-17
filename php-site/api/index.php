@@ -124,7 +124,19 @@ function handle_blog_list(): never {
     } else {
         $st = get_db()->query('SELECT id, title, slug, excerpt, published, created_at AS createdAt, updated_at AS updatedAt FROM blog_posts ORDER BY created_at DESC');
     }
-    json_response($st->fetchAll());
+    $rows = $st->fetchAll();
+    foreach ($rows as &$row) {
+        $row['id']        = (int)$row['id'];
+        $row['published'] = (bool)(int)$row['published'];
+    }
+    unset($row);
+    json_response(['posts' => $rows, 'total' => count($rows)]);
+}
+
+function cast_blog_row(array $row): array {
+    $row['id']        = (int)$row['id'];
+    $row['published'] = (bool)(int)$row['published'];
+    return $row;
 }
 
 function handle_blog_get(int $id): never {
@@ -132,7 +144,7 @@ function handle_blog_get(int $id): never {
     $st->execute([$id]);
     $row = $st->fetch();
     if (!$row) json_error('Not found', 404);
-    json_response($row);
+    json_response(cast_blog_row($row));
 }
 
 function handle_blog_get_slug(string $slug): never {
@@ -140,7 +152,7 @@ function handle_blog_get_slug(string $slug): never {
     $st->execute([$slug]);
     $row = $st->fetch();
     if (!$row) json_error('Not found', 404);
-    json_response($row);
+    json_response(cast_blog_row($row));
 }
 
 function handle_blog_create(): never {
