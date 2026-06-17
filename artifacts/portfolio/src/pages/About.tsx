@@ -1,30 +1,28 @@
 import { Helmet } from "react-helmet-async";
-import { useListSlides } from "@workspace/api-client-react";
+import { useListSlides, useGetSettings } from "@workspace/api-client-react";
 import Layout from "@/components/Layout";
 import Slider from "@/components/Slider";
 
 export default function AboutPage() {
   const { data: slides } = useListSlides();
+  const { data: settings } = useGetSettings();
 
   const slideData = (slides ?? []).map((s) => ({
     imageUrl: s.imageUrl,
     altText: s.altText,
   }));
 
+  const heading = settings?.aboutHeading ?? "Character-driven storytelling across stage and screen.";
+  const body = settings?.aboutBody ?? "";
+
   const panel = (
     <div className="nk-tab-content active">
-      <h2>Character-driven storytelling across stage and screen.</h2>
-      <p>
-        Constance Turyova is an actor dedicated to character-driven storytelling across stage and screen.
-        Her work emphasizes emotional authenticity, intellectual engagement, and ensemble collaboration,
-        reflecting a disciplined and versatile approach to performance.
-      </p>
-      <p>
-        She brings curiosity, focus, and collaborative commitment to every production, contributing
-        meaningfully to the creative process. Constance's work is guided by a belief that every
-        performance is an opportunity to illuminate truth, engage audiences, and enrich the story
-        being told.
-      </p>
+      <h2>{heading}</h2>
+      {body
+        ? body.split("\n").filter((line) => line.trim()).map((para, i) => (
+            <p key={i}>{para}</p>
+          ))
+        : null}
     </div>
   );
 
