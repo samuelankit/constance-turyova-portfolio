@@ -65,7 +65,7 @@ function Login({ onLogin }: { onLogin: () => void }) {
 }
 
 function AdminPanel({ onLogout }: { onLogout: () => void }) {
-  const [tab, setTab] = useState<"slides" | "blog" | "settings">("slides");
+  const [tab, setTab] = useState<"slides" | "blog" | "about" | "settings">("slides");
 
   return (
     <div className="nk-admin">
@@ -78,10 +78,12 @@ function AdminPanel({ onLogout }: { onLogout: () => void }) {
         <div className="nk-admin-tabs">
           <button className={`nk-admin-tab${tab === "slides" ? " active" : ""}`} onClick={() => setTab("slides")}>Slides</button>
           <button className={`nk-admin-tab${tab === "blog" ? " active" : ""}`} onClick={() => setTab("blog")}>Blog</button>
+          <button className={`nk-admin-tab${tab === "about" ? " active" : ""}`} onClick={() => setTab("about")}>About</button>
           <button className={`nk-admin-tab${tab === "settings" ? " active" : ""}`} onClick={() => setTab("settings")}>Settings</button>
         </div>
         {tab === "slides" && <SlidesManager />}
         {tab === "blog" && <BlogManager />}
+        {tab === "about" && <AboutManager />}
         {tab === "settings" && <SettingsManager />}
       </div>
     </div>
@@ -314,6 +316,63 @@ function BlogManager() {
           </div>
         </div>
       ))}
+    </div>
+  );
+}
+
+function AboutManager() {
+  const qc = useQueryClient();
+  const { data: settings, isLoading } = useGetSettings();
+  const updateSettings = useUpdateSettings();
+  const [heading, setHeading] = useState<string | null>(null);
+  const [body, setBody] = useState<string | null>(null);
+  const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const currentHeading = heading ?? settings?.aboutHeading ?? "";
+  const currentBody = body ?? settings?.aboutBody ?? "";
+
+  async function handleSave() {
+    setSaving(true);
+    try {
+      await updateSettings.mutateAsync({ data: { aboutHeading: currentHeading, aboutBody: currentBody } });
+      await qc.invalidateQueries({ queryKey: getGetSettingsQueryKey() });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  if (isLoading) return <div className="nk-spinner" style={{ margin: "20px auto" }} />;
+
+  return (
+    <div>
+      <p className="nk-admin-section-title">About Page</p>
+      {saved && <div className="nk-admin-msg success">About page saved.</div>}
+      <div className="nk-admin-card">
+        <label className="nk-admin-label">Heading</label>
+        <input
+          className="nk-admin-input"
+          value={currentHeading}
+          onChange={(e) => setHeading(e.target.value)}
+          placeholder="About page heading"
+        />
+        <label className="nk-admin-label">Body</label>
+        <p style={{ fontSize: 12, color: "var(--color-muted)", marginBottom: 8, marginTop: 0 }}>
+          Each line break becomes a new paragraph.
+        </p>
+        <textarea
+          className="nk-admin-textarea"
+          value={currentBody}
+          onChange={(e) => setBody(e.target.value)}
+          placeholder="About page body text..."
+          style={{ minHeight: 200 }}
+        />
+        <button className="nk-admin-btn" onClick={handleSave} disabled={saving}>
+          {saving ? "Saving…" : "Save About"}
+        </button>
+      </div>
     </div>
   );
 }
