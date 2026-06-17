@@ -344,7 +344,7 @@ components:
 
     SiteSettings:
       type: object
-      required: [id, siteName, tagline, email, instagramUrl, metaDescription, metaKeywords, updatedAt]
+      required: [id, siteName, tagline, email, instagramUrl, metaDescription, metaKeywords, aboutHeading, aboutBody, updatedAt]
       properties:
         id:
           type: integer
@@ -359,6 +359,10 @@ components:
         metaDescription:
           type: string
         metaKeywords:
+          type: string
+        aboutHeading:
+          type: string
+        aboutBody:
           type: string
         updatedAt:
           type: string
@@ -377,5 +381,9 @@ components:
         metaDescription:
           type: string
         metaKeywords:
+          type: string
+        aboutHeading:
+          type: string
+        aboutBody:
           type: string
 
