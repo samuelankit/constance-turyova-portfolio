@@ -10,6 +10,8 @@ export const siteSettingsTable = pgTable("site_settings", {
   instagramUrl: text("instagram_url").notNull().default("https://www.instagram.com/constanceturyova/"),
   metaDescription: text("meta_description").notNull().default("Constance Turyova is an actor dedicated to character-driven storytelling across stage and screen."),
   metaKeywords: text("meta_keywords").notNull().default("actor, acting, theatre, stage, screen, Constance Turyova"),
+  aboutHeading: text("about_heading").notNull().default("Character-driven storytelling across stage and screen."),
+  aboutBody: text("about_body").notNull().default("Constance Turyova is an actor dedicated to character-driven storytelling across stage and screen.\n\nShe brings curiosity, focus, and collaborative commitment to every production, contributing meaningfully to the creative process. Constance's work is guided by a belief that every performance is an opportunity to illuminate truth, engage audiences, and enrich the story being told."),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
 });
 
