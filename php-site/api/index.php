@@ -220,13 +220,18 @@ function handle_settings_get(): never {
     $rows = get_db()->query('SELECT `key`, value FROM site_settings')->fetchAll();
     $out  = [];
     foreach ($rows as $r) $out[$r['key']] = $r['value'];
+    // Ensure about fields always exist with defaults
+    if (!isset($out['aboutHeading'])) $out['aboutHeading'] = 'Character-driven storytelling across stage and screen.';
+    if (!isset($out['aboutBody']))    $out['aboutBody']    = '';
     json_response($out);
 }
 
 function handle_settings_update(): never {
-    $body = get_json_body();
-    $db   = get_db();
+    $body    = get_json_body();
+    $db      = get_db();
+    $allowed = ['siteName','tagline','email','instagramUrl','metaDescription','metaKeywords','aboutHeading','aboutBody'];
     foreach ($body as $key => $value) {
+        if (!in_array($key, $allowed, true)) continue;
         $st = $db->prepare('INSERT INTO site_settings (`key`, value) VALUES (?, ?) ON DUPLICATE KEY UPDATE value = VALUES(value)');
         $st->execute([trim($key), $value]);
     }
