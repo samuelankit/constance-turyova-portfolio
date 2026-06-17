@@ -79,6 +79,7 @@ export default function BlogPost({ id: propId, onBack, slides: propSlides }: Pro
       <Layout
         slider={<Slider images={slideData} />}
         blogPanel={panel}
+        panelCloseTo="/blog"
         showBlogLink={false}
         bottomLeft={
           <button
