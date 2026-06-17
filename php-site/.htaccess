@@ -4,14 +4,14 @@ Options +FollowSymLinks
 # Prefer index.html over index.php for directory requests
 DirectoryIndex index.html index.php
 
-# Force HTTPS once SSL certificate is active
+# Force HTTPS
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteCond %{HTTPS} off
     RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 </IfModule>
 
-# Disable LiteSpeed page cache for this site (clears WordPress cached pages)
+# Disable LiteSpeed page cache for this site
 <IfModule LiteSpeedModule>
     CacheDisable public /
 </IfModule>
@@ -20,7 +20,7 @@ DirectoryIndex index.html index.php
     RewriteEngine On
     RewriteBase /
 
-    # Always serve index.html for the root (prevents WordPress index.php from loading)
+    # Always serve index.html for the root
     RewriteRule ^$ index.html [L]
 
     # Route /api/* to the PHP router
