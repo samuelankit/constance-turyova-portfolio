@@ -189,6 +189,20 @@ body {
   pointer-events: auto;
 }
 
+.nk-panel-close {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  font-size: 28px;
+  line-height: 1;
+  color: var(--color-dark);
+  text-decoration: none;
+  opacity: 0.45;
+  transition: opacity var(--transition);
+  z-index: 2;
+}
+.nk-panel-close:hover { opacity: 1; }
+
 .nk-nav-close {
   position: absolute;
   top: 24px;
