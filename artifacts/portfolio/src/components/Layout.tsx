@@ -11,6 +11,7 @@ interface LayoutProps {
   pageTitle?: string;
   bottomLeft?: React.ReactNode;
   showBlogLink?: boolean;
+  panelCloseTo?: string;
 }
 
 const navLinks = [
@@ -28,6 +29,7 @@ export default function Layout({
   pageTitle,
   bottomLeft,
   showBlogLink = true,
+  panelCloseTo = "/",
 }: LayoutProps) {
   const [navOpen, setNavOpen] = useState(false);
   const [location] = useLocation();
@@ -85,9 +87,10 @@ export default function Layout({
         </div>
       )}
 
-      {/* Content panel (right side — about, contact, blog article) */}
+      {/* Content panel (right side — about, contact) */}
       {contentPanel && (
         <div className={`nk-content-panel ${contentPanelSide === "left" ? "nk-blog-panel" : ""} open`}>
+          <Link href={panelCloseTo} className="nk-panel-close" aria-label="Close panel">×</Link>
           {contentPanel}
         </div>
       )}
@@ -95,6 +98,7 @@ export default function Layout({
       {/* Blog panel (left side) */}
       {blogPanel && (
         <div className="nk-blog-panel open">
+          <Link href={panelCloseTo} className="nk-panel-close" aria-label="Close panel">×</Link>
           {blogPanel}
         </div>
       )}
