@@ -180,24 +180,44 @@ function BlogManager() {
   const deletePost = useDeleteBlogPost();
 
   const [editing, setEditing] = useState<number | "new" | null>(null);
-  const [form, setForm] = useState({ title: "", excerpt: "", content: "", published: true });
+  const [form, setForm] = useState({ title: "", excerpt: "", content: "", imageUrl: "", published: true });
+  const [imgUploading, setImgUploading] = useState(false);
   const [msg, setMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   const posts = blogData?.posts ?? [];
 
   function startNew() {
     setEditing("new");
-    setForm({ title: "", excerpt: "", content: "", published: true });
+    setForm({ title: "", excerpt: "", content: "", imageUrl: "", published: true });
   }
 
   function startEdit(p: typeof posts[0]) {
     setEditing(p.id);
-    setForm({ title: p.title, excerpt: p.excerpt, content: p.content, published: p.published });
+    setForm({ title: p.title, excerpt: p.excerpt, content: p.content, imageUrl: p.imageUrl ?? "", published: p.published });
   }
 
   function cancel() {
     setEditing(null);
     setMsg(null);
+  }
+
+  async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImgUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/upload", { method: "POST", body: fd });
+      if (!res.ok) throw new Error();
+      const { url } = await res.json();
+      setForm((f) => ({ ...f, imageUrl: url }));
+    } catch {
+      setMsg({ type: "error", text: "Image upload failed." });
+    } finally {
+      setImgUploading(false);
+      e.target.value = "";
+    }
   }
 
   async function handleSave() {
@@ -206,10 +226,11 @@ function BlogManager() {
       return;
     }
     try {
+      const data = { ...form, imageUrl: form.imageUrl || undefined };
       if (editing === "new") {
-        await createPost.mutateAsync({ data: form });
+        await createPost.mutateAsync({ data });
       } else if (typeof editing === "number") {
-        await updatePost.mutateAsync({ id: editing, data: form });
+        await updatePost.mutateAsync({ id: editing, data });
       }
       await qc.invalidateQueries({ queryKey: getListBlogPostsQueryKey() });
       setMsg({ type: "success", text: editing === "new" ? "Post created." : "Post updated." });
@@ -240,6 +261,18 @@ function BlogManager() {
           <input className="nk-admin-input" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Post title" />
           <label className="nk-admin-label">Excerpt</label>
           <input className="nk-admin-input" value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} placeholder="Short summary" />
+          <label className="nk-admin-label">Cover Image</label>
+          {form.imageUrl ? (
+            <div style={{ marginBottom: 12 }}>
+              <img src={form.imageUrl} alt="Cover" style={{ maxWidth: "100%", maxHeight: 180, objectFit: "cover", display: "block", marginBottom: 8, borderRadius: 4 }} />
+              <button className="nk-admin-btn secondary" style={{ padding: "4px 10px", fontSize: 10 }} onClick={() => setForm((f) => ({ ...f, imageUrl: "" }))}>Remove image</button>
+            </div>
+          ) : (
+            <div style={{ marginBottom: 12 }}>
+              <input type="file" accept="image/*" onChange={handleImageUpload} disabled={imgUploading} style={{ fontSize: 13 }} />
+              {imgUploading && <span style={{ fontSize: 12, color: "var(--color-muted)", marginLeft: 8 }}>Uploading…</span>}
+            </div>
+          )}
           <label className="nk-admin-label">Content</label>
           <textarea className="nk-admin-textarea" value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} placeholder="Full post content..." style={{ minHeight: 200 }} />
           <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, cursor: "pointer", marginBottom: 16 }}>
