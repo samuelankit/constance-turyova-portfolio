@@ -203,6 +203,14 @@ body {
 }
 .nk-panel-close:hover { opacity: 1; }
 
+@media (max-width: 768px) {
+  /* Move close button to left on mobile — right side is taken by hamburger */
+  .nk-panel-close {
+    right: auto;
+    left: 24px;
+  }
+}
+
 .nk-nav-close {
   position: absolute;
   top: 24px;
