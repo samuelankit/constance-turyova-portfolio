@@ -8,6 +8,7 @@ import BlogPage from "@/pages/Blog";
 import BlogPostPage from "@/pages/BlogPost";
 import ContactPage from "@/pages/Contact";
 import AdminPage from "@/pages/Admin";
+import PortfolioPage from "@/pages/Portfolio";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient({
@@ -21,8 +22,9 @@ function Router() {
     <Switch>
       <Route path="/" component={HomePage} />
       <Route path="/about" component={AboutPage} />
-      <Route path="/blog" component={BlogPage} />
-      <Route path="/blog/:id">{(params) => <BlogPostPage id={Number(params.id)} />}</Route>
+      <Route path="/updates" component={BlogPage} />
+      <Route path="/updates/:id">{(params) => <BlogPostPage id={Number(params.id)} />}</Route>
+      <Route path="/portfolio" component={PortfolioPage} />
       <Route path="/contact" component={ContactPage} />
       <Route path="/admin" component={AdminPage} />
       <Route component={NotFound} />
