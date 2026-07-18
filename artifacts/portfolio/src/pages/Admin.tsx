@@ -89,7 +89,7 @@ function AdminPanel({ onLogout }: { onLogout: () => void }) {
       <div className="nk-admin-body">
         <div className="nk-admin-tabs">
           <button className={`nk-admin-tab${tab === "slides" ? " active" : ""}`} onClick={() => setTab("slides")}>Slides</button>
-          <button className={`nk-admin-tab${tab === "blog" ? " active" : ""}`} onClick={() => setTab("blog")}>Blog</button>
+          <button className={`nk-admin-tab${tab === "blog" ? " active" : ""}`} onClick={() => setTab("blog")}>Updates</button>
           <button className={`nk-admin-tab${tab === "portfolio" ? " active" : ""}`} onClick={() => setTab("portfolio")}>Portfolio</button>
           <button className={`nk-admin-tab${tab === "about" ? " active" : ""}`} onClick={() => setTab("about")}>About</button>
           <button className={`nk-admin-tab${tab === "settings" ? " active" : ""}`} onClick={() => setTab("settings")}>Settings</button>
