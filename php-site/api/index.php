@@ -86,6 +86,20 @@ if (preg_match('#^/portfolio/videos/(\d+)$#', $path, $m)) {
     if ($method === 'DELETE') handle_portfolio_videos_delete((int)$m[1]);
 }
 
+// Portfolio Voice Records
+if ($path === '/portfolio/voice-records') {
+    if ($method === 'GET')  handle_portfolio_voice_records_list();
+    if ($method === 'POST') handle_portfolio_voice_records_create();
+}
+if (preg_match('#^/portfolio/voice-records/(\d+)$#', $path, $m)) {
+    if ($method === 'DELETE') handle_portfolio_voice_records_delete((int)$m[1]);
+}
+
+// Audio upload
+if ($path === '/upload-audio' && $method === 'POST') {
+    handle_upload_audio();
+}
+
 json_error('Not found', 404);
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -315,6 +329,14 @@ function ensure_portfolio_tables(): void {
         sort_order INT NOT NULL DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )');
+    $db->exec('CREATE TABLE IF NOT EXISTS portfolio_voice_records (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        title VARCHAR(500) NOT NULL,
+        description TEXT NOT NULL DEFAULT \'\',
+        audio_url VARCHAR(1000) NOT NULL,
+        sort_order INT NOT NULL DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )');
 }
 
 function handle_portfolio_photos_list(): never {
@@ -411,6 +433,88 @@ function handle_portfolio_videos_delete(int $id): never {
     if (!$row->fetch()) json_error('Not found', 404);
     get_db()->prepare('DELETE FROM portfolio_videos WHERE id = ?')->execute([$id]);
     json_response(['success' => true]);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PORTFOLIO VOICE RECORDS
+// ─────────────────────────────────────────────────────────────────────────────
+
+function handle_portfolio_voice_records_list(): never {
+    ensure_portfolio_tables();
+    $rows = get_db()->query('SELECT id, title, description, audio_url AS audioUrl, sort_order AS sortOrder, created_at AS createdAt FROM portfolio_voice_records ORDER BY id DESC')->fetchAll();
+    foreach ($rows as &$row) {
+        $row['id']        = (int)$row['id'];
+        $row['sortOrder'] = (int)$row['sortOrder'];
+    }
+    unset($row);
+    json_response($rows);
+}
+
+function handle_portfolio_voice_records_create(): never {
+    ensure_portfolio_tables();
+    $body        = get_json_body();
+    $title       = trim($body['title'] ?? '');
+    $description = trim($body['description'] ?? '');
+    $audioUrl    = trim($body['audioUrl'] ?? '');
+    if (!$title)    json_error('title is required');
+    if (!$audioUrl) json_error('audioUrl is required');
+
+    $count = (int)get_db()->query('SELECT COUNT(*) FROM portfolio_voice_records')->fetchColumn();
+    $sort  = (int)($body['sortOrder'] ?? $count);
+
+    $st = get_db()->prepare('INSERT INTO portfolio_voice_records (title, description, audio_url, sort_order) VALUES (?, ?, ?, ?)');
+    $st->execute([$title, $description, $audioUrl, $sort]);
+    $id = (int)get_db()->lastInsertId();
+
+    $row = get_db()->prepare('SELECT id, title, description, audio_url AS audioUrl, sort_order AS sortOrder, created_at AS createdAt FROM portfolio_voice_records WHERE id = ?');
+    $row->execute([$id]);
+    $record = $row->fetch();
+    $record['id']        = (int)$record['id'];
+    $record['sortOrder'] = (int)$record['sortOrder'];
+    json_response($record, 201);
+}
+
+function handle_portfolio_voice_records_delete(int $id): never {
+    ensure_portfolio_tables();
+    $row = get_db()->prepare('SELECT audio_url FROM portfolio_voice_records WHERE id = ?');
+    $row->execute([$id]);
+    $record = $row->fetch();
+    if (!$record) json_error('Not found', 404);
+
+    $url = $record['audio_url'];
+    if (preg_match('#/uploads/(.+)$#', $url, $m)) {
+        $file = UPLOADS_DIR . basename($m[1]);
+        if (file_exists($file)) @unlink($file);
+    }
+
+    get_db()->prepare('DELETE FROM portfolio_voice_records WHERE id = ?')->execute([$id]);
+    json_response(['success' => true]);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AUDIO UPLOAD
+// ─────────────────────────────────────────────────────────────────────────────
+
+function handle_upload_audio(): never {
+    if (empty($_FILES['file'])) json_error('No file uploaded');
+    $file = $_FILES['file'];
+    if ($file['error'] !== UPLOAD_ERR_OK) json_error('Upload error: ' . $file['error']);
+
+    $allowed = ['audio/mpeg','audio/mp3','audio/wav','audio/x-wav','audio/mp4','audio/x-m4a','audio/ogg','audio/vorbis','audio/webm'];
+    $mime    = mime_content_type($file['tmp_name']);
+    if (!in_array($mime, $allowed, true)) json_error('Invalid file type: ' . $mime);
+
+    if ($file['size'] > 50 * 1024 * 1024) json_error('File too large (max 50 MB)');
+
+    if (!is_dir(UPLOADS_DIR)) mkdir(UPLOADS_DIR, 0755, true);
+
+    $ext      = pathinfo($file['name'], PATHINFO_EXTENSION) ?: 'mp3';
+    $filename = uniqid('audio_', true) . '.' . strtolower($ext);
+    $dest     = UPLOADS_DIR . $filename;
+
+    if (!move_uploaded_file($file['tmp_name'], $dest)) json_error('Failed to save file');
+
+    json_response(['url' => '/api/uploads/' . $filename], 201);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
