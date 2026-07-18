@@ -17,11 +17,15 @@ import {
   useListPortfolioVideos,
   useCreatePortfolioVideo,
   useDeletePortfolioVideo,
+  useListPortfolioVoiceRecords,
+  useCreatePortfolioVoiceRecord,
+  useDeletePortfolioVoiceRecord,
   getListSlidesQueryKey,
   getListBlogPostsQueryKey,
   getGetSettingsQueryKey,
   getListPortfolioPhotosQueryKey,
   getListPortfolioVideosQueryKey,
+  getListPortfolioVoiceRecordsQueryKey,
 } from "@workspace/api-client-react";
 
 const ADMIN_PASSWORD = "constance2024";
@@ -44,7 +48,7 @@ function Login({ onLogin }: { onLogin: () => void }) {
 
   return (
     <div className="nk-login">
-      <Helmet><title>Admin — Constance Turyova</title></Helmet>
+      <Helmet><title>Admin — Constance T</title></Helmet>
       <div className="nk-login-box">
         <p className="nk-login-title">Admin Access</p>
         {err && (
@@ -77,9 +81,9 @@ function AdminPanel({ onLogout }: { onLogout: () => void }) {
 
   return (
     <div className="nk-admin">
-      <Helmet><title>Admin — Constance Turyova</title></Helmet>
+      <Helmet><title>Admin — Constance T</title></Helmet>
       <div className="nk-admin-header">
-        <h1>Admin — Constance Turyova</h1>
+        <h1>Admin — Constance T</h1>
         <button className="nk-admin-logout" onClick={onLogout}>Log out</button>
       </div>
       <div className="nk-admin-body">
@@ -331,7 +335,7 @@ function BlogManager() {
 }
 
 function PortfolioManager() {
-  const [subTab, setSubTab] = useState<"photos" | "videos">("photos");
+  const [subTab, setSubTab] = useState<"photos" | "videos" | "voice">("photos");
   return (
     <div>
       <p className="nk-admin-section-title">Portfolio</p>
@@ -350,9 +354,17 @@ function PortfolioManager() {
         >
           Videos
         </button>
+        <button
+          className={`nk-admin-btn${subTab === "voice" ? "" : " secondary"}`}
+          style={{ padding: "6px 16px", fontSize: 10 }}
+          onClick={() => setSubTab("voice")}
+        >
+          Voice Records
+        </button>
       </div>
       {subTab === "photos" && <PortfolioPhotosManager />}
       {subTab === "videos" && <PortfolioVideosManager />}
+      {subTab === "voice" && <PortfolioVoiceRecordsManager />}
     </div>
   );
 }
@@ -640,6 +652,115 @@ function PortfolioVideosManager() {
           </div>
         );
       })}
+    </div>
+  );
+}
+
+function PortfolioVoiceRecordsManager() {
+  const qc = useQueryClient();
+  const { data: records, isLoading } = useListPortfolioVoiceRecords();
+  const createRecord = useCreatePortfolioVoiceRecord();
+  const deleteRecord = useDeletePortfolioVoiceRecord();
+  const [form, setForm] = useState({ title: "", description: "" });
+  const [uploading, setUploading] = useState(false);
+  const [msg, setMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!form.title.trim()) {
+      setMsg({ type: "error", text: "Please enter a title before uploading." });
+      e.target.value = "";
+      return;
+    }
+    setUploading(true);
+    setMsg(null);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/upload-audio", { method: "POST", body: fd });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || "Upload failed");
+      }
+      const { url } = await res.json();
+      await createRecord.mutateAsync({
+        data: { title: form.title.trim(), description: form.description.trim(), audioUrl: url, sortOrder: records?.length ?? 0 },
+      });
+      await qc.invalidateQueries({ queryKey: getListPortfolioVoiceRecordsQueryKey() });
+      setForm({ title: "", description: "" });
+      setMsg({ type: "success", text: "Voice record added." });
+    } catch (err) {
+      setMsg({ type: "error", text: err instanceof Error ? err.message : "Upload failed. Please try again." });
+    } finally {
+      setUploading(false);
+      e.target.value = "";
+    }
+  }
+
+  async function handleDelete(id: number) {
+    if (!confirm("Delete this voice record?")) return;
+    await deleteRecord.mutateAsync({ id });
+    await qc.invalidateQueries({ queryKey: getListPortfolioVoiceRecordsQueryKey() });
+  }
+
+  return (
+    <div>
+      {msg && <div className={`nk-admin-msg ${msg.type}`}>{msg.text}</div>}
+      <div className="nk-admin-card">
+        <label className="nk-admin-label">Title <span style={{ color: "var(--color-accent)" }}>*</span></label>
+        <input
+          className="nk-admin-input"
+          value={form.title}
+          onChange={(e) => setForm({ ...form, title: e.target.value })}
+          placeholder="Recording title"
+        />
+        <label className="nk-admin-label">Description (optional)</label>
+        <textarea
+          className="nk-admin-input"
+          value={form.description}
+          onChange={(e) => setForm({ ...form, description: e.target.value })}
+          placeholder="Short description of this recording"
+          rows={2}
+          style={{ resize: "vertical" }}
+        />
+        <label className="nk-admin-label">Audio file (MP3, WAV, M4A, OGG — max 50 MB)</label>
+        <div className="nk-admin-upload-zone">
+          <p>{uploading ? "Uploading…" : "Click to select an audio file"}</p>
+          <input
+            type="file"
+            accept=".mp3,.wav,.m4a,.ogg,audio/*"
+            onChange={handleFileUpload}
+            disabled={uploading}
+            style={{ marginTop: 12 }}
+          />
+        </div>
+      </div>
+
+      {isLoading && <div className="nk-spinner" style={{ margin: "20px auto" }} />}
+      {!isLoading && (records ?? []).length === 0 && (
+        <p style={{ color: "var(--color-muted)", fontSize: 14 }}>No voice records yet. Fill in a title and upload an audio file.</p>
+      )}
+      {(records ?? []).map((r) => (
+        <div key={r.id} className="nk-admin-post-row" style={{ alignItems: "flex-start" }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 14, color: "var(--color-dark)", fontWeight: 400, marginBottom: 2 }}>{r.title}</div>
+            {r.description && (
+              <div style={{ fontSize: 12, color: "var(--color-muted)", marginBottom: 6 }}>{r.description}</div>
+            )}
+            <audio controls src={r.audioUrl} style={{ width: "100%", maxWidth: 320, display: "block" }} preload="metadata" />
+          </div>
+          <div className="nk-admin-post-actions" style={{ marginLeft: 12, flexShrink: 0 }}>
+            <button
+              className="nk-admin-btn danger"
+              style={{ padding: "6px 12px", fontSize: 10 }}
+              onClick={() => handleDelete(r.id)}
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
