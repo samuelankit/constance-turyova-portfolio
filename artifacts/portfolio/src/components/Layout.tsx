@@ -131,7 +131,7 @@ export default function Layout({
               </Link>
             </li>
           ))}
-          <li>
+          <li style={{ display: "none" }}>
             <a
               href="https://www.instagram.com/lcperforms/"
               target="_blank"
