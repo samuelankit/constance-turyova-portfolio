@@ -836,6 +836,7 @@ function SettingsManager() {
     instagramUrl: form.instagramUrl ?? settings?.instagramUrl ?? "",
     facebookUrl: form.facebookUrl ?? settings?.facebookUrl ?? "",
     spotlightUrl: form.spotlightUrl ?? settings?.spotlightUrl ?? "",
+    tiktokUrl: form.tiktokUrl ?? settings?.tiktokUrl ?? "",
     metaDescription: form.metaDescription ?? settings?.metaDescription ?? "",
     metaKeywords: form.metaKeywords ?? settings?.metaKeywords ?? "",
   };
@@ -853,7 +854,7 @@ function SettingsManager() {
     <div>
       <p className="nk-admin-section-title">Site Settings</p>
       <div className="nk-admin-card">
-        {(["siteName", "tagline", "email", "instagramUrl", "facebookUrl", "spotlightUrl", "metaDescription", "metaKeywords"] as const).map((key) => (
+        {(["siteName", "tagline", "email", "instagramUrl", "facebookUrl", "tiktokUrl", "spotlightUrl", "metaDescription", "metaKeywords"] as const).map((key) => (
           <div key={key}>
             <label className="nk-admin-label">{key.replace(/([A-Z])/g, " $1").trim()}</label>
             <input
