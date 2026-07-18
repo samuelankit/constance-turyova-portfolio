@@ -153,12 +153,12 @@ export default function PortfolioPage() {
   return (
     <>
       <Helmet>
-        <title>My Portfolio &mdash; Constance Turyova</title>
+        <title>My Portfolio &mdash; Constance T</title>
         <meta
           name="description"
-          content="Photo and video portfolio of Constance Turyova — actor, performer, and storyteller."
+          content="Photo and video portfolio of Constance T — actor, performer, and storyteller."
         />
-        <meta property="og:title" content="My Portfolio — Constance Turyova" />
+        <meta property="og:title" content="My Portfolio — Constance T" />
       </Helmet>
 
       <Layout
