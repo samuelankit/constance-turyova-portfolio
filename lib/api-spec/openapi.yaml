@@ -15,6 +15,8 @@ tags:
     description: Blog posts
   - name: settings
     description: Site settings
+  - name: portfolio
+    description: Portfolio photos and videos
 
 paths:
   /healthz:
@@ -199,6 +201,147 @@ paths:
         "204":
           description: Deleted
 
+  /portfolio/photos:
+    get:
+      operationId: listPortfolioPhotos
+      tags: [portfolio]
+      summary: List all portfolio photos
+      responses:
+        "200":
+          description: List of portfolio photos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PortfolioPhoto"
+    post:
+      operationId: createPortfolioPhoto
+      tags: [portfolio]
+      summary: Add a new portfolio photo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PortfolioPhotoInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PortfolioPhoto"
+
+  /portfolio/photos/{id}:
+    delete:
+      operationId: deletePortfolioPhoto
+      tags: [portfolio]
+      summary: Delete a portfolio photo
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /portfolio/videos:
+    get:
+      operationId: listPortfolioVideos
+      tags: [portfolio]
+      summary: List all portfolio videos
+      responses:
+        "200":
+          description: List of portfolio videos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PortfolioVideo"
+    post:
+      operationId: createPortfolioVideo
+      tags: [portfolio]
+      summary: Add a new portfolio video
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PortfolioVideoInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PortfolioVideo"
+
+  /portfolio/videos/{id}:
+    delete:
+      operationId: deletePortfolioVideo
+      tags: [portfolio]
+      summary: Delete a portfolio video
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /portfolio/voice-records:
+    get:
+      operationId: listPortfolioVoiceRecords
+      tags: [portfolio]
+      summary: List all portfolio voice records
+      responses:
+        "200":
+          description: List of portfolio voice records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PortfolioVoiceRecord"
+    post:
+      operationId: createPortfolioVoiceRecord
+      tags: [portfolio]
+      summary: Add a new portfolio voice record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PortfolioVoiceRecordInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PortfolioVoiceRecord"
+
+  /portfolio/voice-records/{id}:
+    delete:
+      operationId: deletePortfolioVoiceRecord
+      tags: [portfolio]
+      summary: Delete a portfolio voice record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
   /settings:
     get:
       operationId: getSettings
@@ -340,6 +483,88 @@ components:
           items:
             $ref: "#/components/schemas/BlogPost"
         total:
+          type: integer
+
+    PortfolioPhoto:
+      type: object
+      required: [id, imageUrl, altText, sortOrder, createdAt]
+      properties:
+        id:
+          type: integer
+        imageUrl:
+          type: string
+        altText:
+          type: string
+        sortOrder:
+          type: integer
+        createdAt:
+          type: string
+
+    PortfolioPhotoInput:
+      type: object
+      required: [imageUrl]
+      properties:
+        imageUrl:
+          type: string
+        altText:
+          type: string
+        sortOrder:
+          type: integer
+
+    PortfolioVideo:
+      type: object
+      required: [id, videoUrl, title, sortOrder, createdAt]
+      properties:
+        id:
+          type: integer
+        videoUrl:
+          type: string
+        title:
+          type: string
+        sortOrder:
+          type: integer
+        createdAt:
+          type: string
+
+    PortfolioVideoInput:
+      type: object
+      required: [videoUrl]
+      properties:
+        videoUrl:
+          type: string
+        title:
+          type: string
+        sortOrder:
+          type: integer
+
+    PortfolioVoiceRecord:
+      type: object
+      required: [id, title, description, audioUrl, sortOrder, createdAt]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        audioUrl:
+          type: string
+        sortOrder:
+          type: integer
+        createdAt:
+          type: string
+
+    PortfolioVoiceRecordInput:
+      type: object
+      required: [title, audioUrl]
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        audioUrl:
+          type: string
+        sortOrder:
           type: integer
 
     SiteSettings:
