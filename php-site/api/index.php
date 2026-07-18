@@ -268,6 +268,8 @@ function handle_settings_get(): never {
     if (!isset($out['siteName']))     $out['siteName']     = 'Constance T';
     if (!isset($out['email']))        $out['email']        = 'contact@lcperforms.com';
     if (!isset($out['instagramUrl'])) $out['instagramUrl'] = 'https://www.instagram.com/lcperforms/';
+    if (!isset($out['facebookUrl']))  $out['facebookUrl']  = '';
+    if (!isset($out['spotlightUrl'])) $out['spotlightUrl'] = '';
     if (!isset($out['aboutHeading'])) $out['aboutHeading'] = 'Character-driven storytelling across stage and screen.';
     if (!isset($out['aboutBody']))    $out['aboutBody']    = '';
     json_response($out);
@@ -276,7 +278,7 @@ function handle_settings_get(): never {
 function handle_settings_update(): never {
     $body    = get_json_body();
     $db      = get_db();
-    $allowed = ['siteName','tagline','email','instagramUrl','metaDescription','metaKeywords','aboutHeading','aboutBody'];
+    $allowed = ['siteName','tagline','email','instagramUrl','facebookUrl','spotlightUrl','metaDescription','metaKeywords','aboutHeading','aboutBody'];
     foreach ($body as $key => $value) {
         if (!in_array($key, $allowed, true)) continue;
         $st = $db->prepare('INSERT INTO site_settings (`key`, value) VALUES (?, ?) ON DUPLICATE KEY UPDATE value = VALUES(value)');
