@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Helmet } from "react-helmet-async";
-import { useListSlides, useListPortfolioPhotos, useListPortfolioVideos } from "@workspace/api-client-react";
+import { useListSlides, useListPortfolioPhotos, useListPortfolioVideos, useListPortfolioVoiceRecords } from "@workspace/api-client-react";
 import Layout from "@/components/Layout";
 import Slider from "@/components/Slider";
 
@@ -30,12 +30,13 @@ function getEmbedUrl(url: string): string | null {
 }
 
 export default function PortfolioPage() {
-  const [tab, setTab] = useState<"photos" | "videos">("photos");
+  const [tab, setTab] = useState<"photos" | "videos" | "voice">("photos");
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const { data: slides } = useListSlides();
   const { data: photos, isLoading: photosLoading } = useListPortfolioPhotos();
   const { data: videos, isLoading: videosLoading } = useListPortfolioVideos();
+  const { data: voiceRecords, isLoading: voiceLoading } = useListPortfolioVoiceRecords();
 
   const photoList = photos ?? [];
   const slideData = (slides ?? []).map((s) => ({ imageUrl: s.imageUrl, altText: s.altText }));
@@ -73,6 +74,12 @@ export default function PortfolioPage() {
           onClick={() => setTab("videos")}
         >
           Videos
+        </button>
+        <button
+          className={`nk-tab-btn${tab === "voice" ? " active" : ""}`}
+          onClick={() => setTab("voice")}
+        >
+          Voice Records
         </button>
       </div>
 
@@ -145,6 +152,37 @@ export default function PortfolioPage() {
           </div>
         </div>
       )}
+
+      {tab === "voice" && (
+        <div className="nk-tab-content active">
+          {voiceLoading && (
+            <div style={{ padding: "40px 0", textAlign: "center" }}>
+              <div className="nk-spinner" style={{ margin: "0 auto" }} />
+            </div>
+          )}
+          {!voiceLoading && (voiceRecords ?? []).length === 0 && (
+            <p style={{ color: "var(--color-muted)", paddingTop: 20 }}>No voice records yet.</p>
+          )}
+          <div className="nk-voice-records">
+            {(voiceRecords ?? []).map((record) => (
+              <div key={record.id} className="nk-voice-record-item">
+                <div className="nk-voice-record-header">
+                  <h3 className="nk-voice-record-title">{record.title}</h3>
+                  {record.description && (
+                    <p className="nk-voice-record-desc">{record.description}</p>
+                  )}
+                </div>
+                <audio
+                  controls
+                  className="nk-audio-player"
+                  src={record.audioUrl}
+                  preload="metadata"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 
@@ -156,7 +194,7 @@ export default function PortfolioPage() {
         <title>My Portfolio &mdash; Constance T</title>
         <meta
           name="description"
-          content="Photo and video portfolio of Constance T — actor, performer, and storyteller."
+          content="Photo, video, and voice portfolio of Constance T — actor, performer, and storyteller."
         />
         <meta property="og:title" content="My Portfolio — Constance T" />
       </Helmet>
