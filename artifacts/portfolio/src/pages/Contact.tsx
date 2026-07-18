@@ -31,7 +31,7 @@ export default function ContactPage() {
       <div className="nk-contact-item">
         <p className="nk-contact-label">Instagram</p>
         <a
-          href="https://www.instagram.com/constanceturyova/"
+          href="https://www.instagram.com/lcperforms/"
           target="_blank"
           rel="noopener noreferrer"
           className="nk-instagram-link"
@@ -41,14 +41,14 @@ export default function ContactPage() {
             <circle cx="12" cy="12" r="4"/>
             <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
           </svg>
-          @constanceturyova
+          @lcperforms
         </a>
       </div>
 
       <div className="nk-contact-item">
         <p className="nk-contact-label">Email</p>
-        <a href="mailto:contact@constanceturyova.com" className="nk-contact-value">
-          contact@constanceturyova.com
+        <a href="mailto:contact@lcperforms.com" className="nk-contact-value">
+          contact@lcperforms.com
         </a>
       </div>
 
@@ -111,15 +111,15 @@ export default function ContactPage() {
   return (
     <>
       <Helmet>
-        <title>Contact &mdash; Constance Turyova</title>
+        <title>Contact &mdash; Constance T</title>
         <meta
           name="description"
-          content="Get in touch with Constance Turyova — actor. Connect via Instagram @constanceturyova or email."
+          content="Get in touch with Constance T — actor. Connect via Instagram @lcperforms or email."
         />
-        <meta property="og:title" content="Contact — Constance Turyova" />
+        <meta property="og:title" content="Contact — Constance T" />
         <meta
           property="og:description"
-          content="Connect with Constance Turyova. Available for stage and screen productions."
+          content="Connect with Constance T. Available for stage and screen productions."
         />
       </Helmet>
 
