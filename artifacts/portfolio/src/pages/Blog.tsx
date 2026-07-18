@@ -53,12 +53,12 @@ export default function BlogPage() {
   return (
     <>
       <Helmet>
-        <title>Blog &mdash; Constance Turyova</title>
+        <title>Blog &mdash; Constance T</title>
         <meta
           name="description"
-          content="Thoughts on acting, theatre, storytelling, and the craft of performance — from Constance Turyova."
+          content="Thoughts on acting, theatre, storytelling, and the craft of performance — from Constance T."
         />
-        <meta property="og:title" content="Blog — Constance Turyova" />
+        <meta property="og:title" content="Blog — Constance T" />
       </Helmet>
 
       <Layout
