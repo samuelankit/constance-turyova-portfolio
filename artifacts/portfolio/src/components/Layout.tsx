@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import Logo from "./Logo";
+import SocialIcons from "./SocialIcons";
 
 interface LayoutProps {
   children?: React.ReactNode;
@@ -78,6 +79,11 @@ export default function Layout({
           <a href="mailto:contact@lcperforms.com">
             contact@lcperforms.com
           </a>
+        </div>
+
+        {/* Bottom Right — Social Icons */}
+        <div className="nk-layout-bottom-right">
+          <SocialIcons />
         </div>
       </div>
 
