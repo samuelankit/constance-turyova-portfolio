@@ -834,6 +834,8 @@ function SettingsManager() {
     tagline: form.tagline ?? settings?.tagline ?? "",
     email: form.email ?? settings?.email ?? "",
     instagramUrl: form.instagramUrl ?? settings?.instagramUrl ?? "",
+    facebookUrl: form.facebookUrl ?? settings?.facebookUrl ?? "",
+    spotlightUrl: form.spotlightUrl ?? settings?.spotlightUrl ?? "",
     metaDescription: form.metaDescription ?? settings?.metaDescription ?? "",
     metaKeywords: form.metaKeywords ?? settings?.metaKeywords ?? "",
   };
@@ -852,7 +854,7 @@ function SettingsManager() {
       <p className="nk-admin-section-title">Site Settings</p>
       {saved && <div className="nk-admin-msg success">Settings saved.</div>}
       <div className="nk-admin-card">
-        {(["siteName", "tagline", "email", "instagramUrl", "metaDescription", "metaKeywords"] as const).map((key) => (
+        {(["siteName", "tagline", "email", "instagramUrl", "facebookUrl", "spotlightUrl", "metaDescription", "metaKeywords"] as const).map((key) => (
           <div key={key}>
             <label className="nk-admin-label">{key.replace(/([A-Z])/g, " $1").trim()}</label>
             <input
