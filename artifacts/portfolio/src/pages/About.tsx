@@ -29,15 +29,15 @@ export default function AboutPage() {
   return (
     <>
       <Helmet>
-        <title>About &mdash; Constance Turyova</title>
+        <title>About &mdash; Constance T</title>
         <meta
           name="description"
-          content="Learn about Constance Turyova — her training, philosophy, and approach to character-driven performance across stage and screen."
+          content="Learn about Constance T — her training, philosophy, and approach to character-driven performance across stage and screen."
         />
-        <meta property="og:title" content="About — Constance Turyova" />
+        <meta property="og:title" content="About — Constance T" />
         <meta
           property="og:description"
-          content="Constance Turyova's methodology integrates textual analysis, physical embodiment, and psychological realism."
+          content="Constance T's methodology integrates textual analysis, physical embodiment, and psychological realism."
         />
       </Helmet>
 
