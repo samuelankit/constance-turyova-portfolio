@@ -8,6 +8,8 @@ export const siteSettingsTable = pgTable("site_settings", {
   tagline: text("tagline").notNull().default("Actor"),
   email: text("email").notNull().default("contact@lcperforms.com"),
   instagramUrl: text("instagram_url").notNull().default("https://www.instagram.com/lcperforms/"),
+  facebookUrl: text("facebook_url").notNull().default(""),
+  spotlightUrl: text("spotlight_url").notNull().default(""),
   metaDescription: text("meta_description").notNull().default("Constance T is an actor dedicated to character-driven storytelling across stage and screen."),
   metaKeywords: text("meta_keywords").notNull().default("actor, acting, theatre, stage, screen, Constance T"),
   aboutHeading: text("about_heading").notNull().default("Character-driven storytelling across stage and screen."),
