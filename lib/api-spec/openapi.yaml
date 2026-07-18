@@ -569,7 +569,7 @@ components:
 
     SiteSettings:
       type: object
-      required: [id, siteName, tagline, email, instagramUrl, metaDescription, metaKeywords, aboutHeading, aboutBody, updatedAt]
+      required: [id, siteName, tagline, email, instagramUrl, facebookUrl, spotlightUrl, metaDescription, metaKeywords, aboutHeading, aboutBody, updatedAt]
       properties:
         id:
           type: integer
@@ -580,6 +580,10 @@ components:
         email:
           type: string
         instagramUrl:
+          type: string
+        facebookUrl:
+          type: string
+        spotlightUrl:
           type: string
         metaDescription:
           type: string
@@ -602,6 +606,10 @@ components:
         email:
           type: string
         instagramUrl:
+          type: string
+        facebookUrl:
+          type: string
+        spotlightUrl:
           type: string
         metaDescription:
           type: string
