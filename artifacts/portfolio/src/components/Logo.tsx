@@ -6,7 +6,7 @@ export default function Logo() {
       viewBox="0 0 190 58"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      aria-label="Constance Turyova"
+      aria-label="Constance Gordon"
       role="img"
     >
       <defs>
@@ -32,7 +32,7 @@ export default function Logo() {
         CONSTANCE
       </text>
 
-      {/* TURYOVA — bold, wider tracking, larger */}
+      {/* GORDON — bold, wider tracking, larger */}
       <text
         x="0"
         y="38"
@@ -43,7 +43,7 @@ export default function Logo() {
         fill="white"
         filter="url(#logo-shadow)"
       >
-        TURYOVA
+        GORDON
       </text>
 
       {/* Thin bottom rule */}
