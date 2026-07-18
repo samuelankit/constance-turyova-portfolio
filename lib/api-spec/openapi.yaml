@@ -569,7 +569,7 @@ components:
 
     SiteSettings:
       type: object
-      required: [id, siteName, tagline, email, instagramUrl, facebookUrl, spotlightUrl, metaDescription, metaKeywords, aboutHeading, aboutBody, updatedAt]
+      required: [id, siteName, tagline, email, instagramUrl, facebookUrl, spotlightUrl, tiktokUrl, metaDescription, metaKeywords, aboutHeading, aboutBody, updatedAt]
       properties:
         id:
           type: integer
@@ -584,6 +584,8 @@ components:
         facebookUrl:
           type: string
         spotlightUrl:
+          type: string
+        tiktokUrl:
           type: string
         metaDescription:
           type: string
@@ -610,6 +612,8 @@ components:
         facebookUrl:
           type: string
         spotlightUrl:
+          type: string
+        tiktokUrl:
           type: string
         metaDescription:
           type: string
