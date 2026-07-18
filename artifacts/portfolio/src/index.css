@@ -54,6 +54,33 @@ body {
 .nk-layout-bottom-right { bottom: 30px; right: 40px; }
 .nk-layout-bottom-center { bottom: 30px; left: 50%; transform: translateX(-50%); }
 
+/* ===== SOCIAL ICONS ===== */
+.nk-social-icons {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.nk-social-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+  filter: drop-shadow(0 0 4px rgba(0,0,0,0.6));
+  text-decoration: none;
+}
+
+.nk-social-icon:hover {
+  opacity: 1;
+}
+
+.nk-social-icon--empty {
+  opacity: 0.3;
+  cursor: default;
+}
+
 /* ===== LOGO ===== */
 .nk-logo {
   display: flex;
