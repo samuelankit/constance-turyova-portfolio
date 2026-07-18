@@ -1123,18 +1123,145 @@ body {
   .nk-layout-top-left { top: 20px; left: 20px; }
   .nk-layout-top-right { top: 20px; right: 20px; }
   .nk-layout-bottom-left { bottom: 20px; left: 20px; }
-  .nk-layout-bottom-right { bottom: 20px; right: 20px; }
+  .nk-layout-bottom-right { bottom: 16px; right: 16px; }
 
-  /* Hide the email on mobile — too cramped alongside BLOG */
+  /* Hide the email on mobile — too cramped */
   .nk-layout-bottom-center { display: none; }
 
-  /* Scale logo down a touch */
-  .nk-logo svg { width: 140px; height: auto; }
+  /* Hide bottom-left label so it doesn't clash with social icons at bottom */
+  .nk-layout-bottom-left { display: none; }
 
-  .nk-content-panel { width: 100%; padding: 80px 24px 40px; }
-  .nk-blog-panel { width: 100%; padding: 80px 24px 40px; }
-  .nk-admin-body { padding: 24px 20px; }
-  .nk-admin-header { padding: 14px 20px; }
-  .nk-admin-slide-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
-  .nk-admin-post-row { flex-direction: column; align-items: flex-start; }
+  /* Scale logo down a touch */
+  .nk-logo svg { width: 130px; height: auto; }
+
+  /* ---- Content panels ---- */
+  .nk-content-panel {
+    width: 100%;
+    max-width: 100%;
+    padding: 72px 20px 60px;
+  }
+  .nk-blog-panel {
+    width: 100%;
+    max-width: 100%;
+    padding: 72px 20px 60px;
+  }
+
+  /* ---- Tab navigation — wrap so all tabs fit ---- */
+  .nk-tab-nav {
+    flex-wrap: wrap;
+    gap: 0;
+    padding-bottom: 2px;
+  }
+  .nk-tab-btn {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    padding: 8px 0;
+    margin-right: 16px;
+    margin-bottom: 4px;
+    white-space: nowrap;
+  }
+
+  /* ---- Blog article images — no forced height ---- */
+  .nk-blog-article img {
+    height: auto;
+    max-height: 50vw;
+    border-radius: 2px;
+    object-fit: cover;
+  }
+
+  /* ---- Social icons — smaller on mobile ---- */
+  .nk-social-icons {
+    gap: 10px;
+  }
+  .nk-social-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* ---- Slider nav dots — move left so they don't overlap social icons ---- */
+  .nk-slider > div:last-child {
+    right: 56px !important;
+    bottom: 14px !important;
+  }
+
+  /* ---- Lightbox — larger touch targets ---- */
+  .nk-lightbox-nav {
+    padding: 20px 28px;
+    font-size: 48px;
+  }
+  .nk-lightbox-close {
+    padding: 16px 20px;
+    top: 8px;
+    right: 8px;
+    font-size: 32px;
+  }
+  .nk-lightbox-counter {
+    font-size: 13px;
+    bottom: 16px;
+  }
+
+  /* ---- Admin ---- */
+  .nk-admin-body { padding: 24px 16px; }
+  .nk-admin-header { padding: 12px 16px; }
+  .nk-admin-tabs {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0;
+  }
+  .nk-admin-tab {
+    white-space: nowrap;
+    flex-shrink: 0;
+    padding: 10px 14px;
+  }
+  .nk-admin-slide-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+  .nk-admin-post-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .nk-admin-post-actions {
+    flex-wrap: wrap;
+  }
+  .nk-admin-btn {
+    padding: 8px 16px;
+  }
+}
+
+/* ===== VERY SMALL SCREENS (≤480px) ===== */
+@media (max-width: 480px) {
+  /* Portfolio masonry — single column on phones */
+  .nk-portfolio-masonry {
+    columns: 1;
+  }
+
+  /* Videos — already 1 column at 600px, keep it */
+
+  /* Logo text slightly smaller */
+  .nk-logo-text {
+    font-size: 15px;
+  }
+  .nk-logo-sub {
+    font-size: 9px;
+  }
+
+  /* Panels — tighter horizontal padding */
+  .nk-content-panel,
+  .nk-blog-panel {
+    padding: 68px 16px 50px;
+  }
+
+  /* Blog article title smaller on very small screens */
+  .nk-blog-article h1 {
+    font-size: 22px;
+  }
+
+  /* Lightbox — full-width image */
+  .nk-lightbox img {
+    max-width: 96vw;
+  }
+  .nk-lightbox-nav {
+    padding: 16px 18px;
+    font-size: 40px;
+  }
 }
