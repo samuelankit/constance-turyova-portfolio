@@ -53,21 +53,21 @@ export default function BlogPage() {
   return (
     <>
       <Helmet>
-        <title>Blog &mdash; Constance T</title>
+        <title>Updates &mdash; Constance T</title>
         <meta
           name="description"
           content="Thoughts on acting, theatre, storytelling, and the craft of performance — from Constance T."
         />
-        <meta property="og:title" content="Blog — Constance T" />
+        <meta property="og:title" content="Updates — Constance T" />
       </Helmet>
 
       <Layout
         slider={<Slider images={slideData} />}
         blogPanel={panel}
-        pageTitle="Blog."
+        pageTitle="Updates."
         bottomLeft={
           <span style={{ fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase", opacity: 0.5 }}>
-            Blog
+            Updates
           </span>
         }
       />
