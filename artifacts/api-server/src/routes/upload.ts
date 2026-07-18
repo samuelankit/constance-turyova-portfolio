@@ -28,11 +28,29 @@ const upload = multer({
   },
 });
 
+const uploadAudio = multer({
+  storage,
+  limits: { fileSize: 50 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    const allowed = ["audio/mpeg", "audio/mp3", "audio/wav", "audio/x-wav", "audio/mp4", "audio/x-m4a", "audio/ogg", "audio/vorbis", "audio/webm"];
+    cb(null, allowed.includes(file.mimetype));
+  },
+});
+
 const router: IRouter = Router();
 
 router.post("/upload", upload.single("file"), (req, res): void => {
   if (!req.file) {
     res.status(400).json({ error: "No file uploaded or invalid file type" });
+    return;
+  }
+  const url = `/api/uploads/${req.file.filename}`;
+  res.json({ url, filename: req.file.filename });
+});
+
+router.post("/upload-audio", uploadAudio.single("file"), (req, res): void => {
+  if (!req.file) {
+    res.status(400).json({ error: "No file uploaded or invalid audio file type (mp3, wav, m4a, ogg)" });
     return;
   }
   const url = `/api/uploads/${req.file.filename}`;
