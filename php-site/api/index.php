@@ -68,6 +68,24 @@ if ($path === '/settings') {
     if ($method === 'PUT') handle_settings_update();
 }
 
+// Portfolio Photos
+if ($path === '/portfolio/photos') {
+    if ($method === 'GET')  handle_portfolio_photos_list();
+    if ($method === 'POST') handle_portfolio_photos_create();
+}
+if (preg_match('#^/portfolio/photos/(\d+)$#', $path, $m)) {
+    if ($method === 'DELETE') handle_portfolio_photos_delete((int)$m[1]);
+}
+
+// Portfolio Videos
+if ($path === '/portfolio/videos') {
+    if ($method === 'GET')  handle_portfolio_videos_list();
+    if ($method === 'POST') handle_portfolio_videos_create();
+}
+if (preg_match('#^/portfolio/videos/(\d+)$#', $path, $m)) {
+    if ($method === 'DELETE') handle_portfolio_videos_delete((int)$m[1]);
+}
+
 json_error('Not found', 404);
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -233,6 +251,9 @@ function handle_settings_get(): never {
     $out  = [];
     foreach ($rows as $r) $out[$r['key']] = $r['value'];
     // Ensure about fields always exist with defaults
+    if (!isset($out['siteName']))     $out['siteName']     = 'Constance T';
+    if (!isset($out['email']))        $out['email']        = 'contact@lcperforms.com';
+    if (!isset($out['instagramUrl'])) $out['instagramUrl'] = 'https://www.instagram.com/lcperforms/';
     if (!isset($out['aboutHeading'])) $out['aboutHeading'] = 'Character-driven storytelling across stage and screen.';
     if (!isset($out['aboutBody']))    $out['aboutBody']    = '';
     json_response($out);
@@ -272,6 +293,124 @@ function handle_upload(): never {
     if (!move_uploaded_file($file['tmp_name'], $dest)) json_error('Failed to save file');
 
     json_response(['url' => '/api/uploads/' . $filename], 201);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PORTFOLIO PHOTOS
+// ─────────────────────────────────────────────────────────────────────────────
+
+function ensure_portfolio_tables(): void {
+    $db = get_db();
+    $db->exec('CREATE TABLE IF NOT EXISTS portfolio_photos (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        image_url VARCHAR(1000) NOT NULL,
+        alt_text VARCHAR(500) NOT NULL DEFAULT \'\',
+        sort_order INT NOT NULL DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )');
+    $db->exec('CREATE TABLE IF NOT EXISTS portfolio_videos (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        video_url VARCHAR(1000) NOT NULL,
+        title VARCHAR(500) NOT NULL DEFAULT \'\',
+        sort_order INT NOT NULL DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )');
+}
+
+function handle_portfolio_photos_list(): never {
+    ensure_portfolio_tables();
+    $rows = get_db()->query('SELECT id, image_url AS imageUrl, alt_text AS altText, sort_order AS sortOrder, created_at AS createdAt FROM portfolio_photos ORDER BY sort_order ASC, id ASC')->fetchAll();
+    foreach ($rows as &$row) {
+        $row['id']        = (int)$row['id'];
+        $row['sortOrder'] = (int)$row['sortOrder'];
+    }
+    unset($row);
+    json_response($rows);
+}
+
+function handle_portfolio_photos_create(): never {
+    ensure_portfolio_tables();
+    $body     = get_json_body();
+    $imageUrl = trim($body['imageUrl'] ?? '');
+    $altText  = trim($body['altText'] ?? '');
+    if (!$imageUrl) json_error('imageUrl is required');
+
+    $count = (int)get_db()->query('SELECT COUNT(*) FROM portfolio_photos')->fetchColumn();
+    $sort  = (int)($body['sortOrder'] ?? $count);
+
+    $st = get_db()->prepare('INSERT INTO portfolio_photos (image_url, alt_text, sort_order) VALUES (?, ?, ?)');
+    $st->execute([$imageUrl, $altText, $sort]);
+    $id = (int)get_db()->lastInsertId();
+
+    $row = get_db()->prepare('SELECT id, image_url AS imageUrl, alt_text AS altText, sort_order AS sortOrder, created_at AS createdAt FROM portfolio_photos WHERE id = ?');
+    $row->execute([$id]);
+    $photo = $row->fetch();
+    $photo['id']        = (int)$photo['id'];
+    $photo['sortOrder'] = (int)$photo['sortOrder'];
+    json_response($photo, 201);
+}
+
+function handle_portfolio_photos_delete(int $id): never {
+    ensure_portfolio_tables();
+    $row = get_db()->prepare('SELECT image_url FROM portfolio_photos WHERE id = ?');
+    $row->execute([$id]);
+    $photo = $row->fetch();
+    if (!$photo) json_error('Not found', 404);
+
+    $url = $photo['image_url'];
+    if (preg_match('#/uploads/(.+)$#', $url, $m)) {
+        $file = UPLOADS_DIR . basename($m[1]);
+        if (file_exists($file)) @unlink($file);
+    }
+
+    get_db()->prepare('DELETE FROM portfolio_photos WHERE id = ?')->execute([$id]);
+    json_response(['success' => true]);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PORTFOLIO VIDEOS
+// ─────────────────────────────────────────────────────────────────────────────
+
+function handle_portfolio_videos_list(): never {
+    ensure_portfolio_tables();
+    $rows = get_db()->query('SELECT id, video_url AS videoUrl, title, sort_order AS sortOrder, created_at AS createdAt FROM portfolio_videos ORDER BY sort_order ASC, id ASC')->fetchAll();
+    foreach ($rows as &$row) {
+        $row['id']        = (int)$row['id'];
+        $row['sortOrder'] = (int)$row['sortOrder'];
+    }
+    unset($row);
+    json_response($rows);
+}
+
+function handle_portfolio_videos_create(): never {
+    ensure_portfolio_tables();
+    $body     = get_json_body();
+    $videoUrl = trim($body['videoUrl'] ?? '');
+    $title    = trim($body['title'] ?? '');
+    if (!$videoUrl) json_error('videoUrl is required');
+
+    $count = (int)get_db()->query('SELECT COUNT(*) FROM portfolio_videos')->fetchColumn();
+    $sort  = (int)($body['sortOrder'] ?? $count);
+
+    $st = get_db()->prepare('INSERT INTO portfolio_videos (video_url, title, sort_order) VALUES (?, ?, ?)');
+    $st->execute([$videoUrl, $title, $sort]);
+    $id = (int)get_db()->lastInsertId();
+
+    $row = get_db()->prepare('SELECT id, video_url AS videoUrl, title, sort_order AS sortOrder, created_at AS createdAt FROM portfolio_videos WHERE id = ?');
+    $row->execute([$id]);
+    $video = $row->fetch();
+    $video['id']        = (int)$video['id'];
+    $video['sortOrder'] = (int)$video['sortOrder'];
+    json_response($video, 201);
+}
+
+function handle_portfolio_videos_delete(int $id): never {
+    ensure_portfolio_tables();
+    $row = get_db()->prepare('SELECT id FROM portfolio_videos WHERE id = ?');
+    $row->execute([$id]);
+    if (!$row->fetch()) json_error('Not found', 404);
+    get_db()->prepare('DELETE FROM portfolio_videos WHERE id = ?')->execute([$id]);
+    json_response(['success' => true]);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
