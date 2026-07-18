@@ -17,6 +17,7 @@ interface LayoutProps {
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
+  { href: "/portfolio", label: "My Portfolio" },
   { href: "/blog", label: "Blog" },
   { href: "/contact", label: "Contact" },
 ];
@@ -74,8 +75,8 @@ export default function Layout({
 
         {/* Bottom Center — email */}
         <div className="nk-layout-bottom-center nk-bottom-nav">
-          <a href="mailto:contact@constanceturyova.com">
-            contact@constanceturyova.com
+          <a href="mailto:contact@lcperforms.com">
+            contact@lcperforms.com
           </a>
         </div>
       </div>
@@ -126,12 +127,12 @@ export default function Layout({
           ))}
           <li>
             <a
-              href="https://www.instagram.com/constanceturyova/"
+              href="https://www.instagram.com/lcperforms/"
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setNavOpen(false)}
             >
-              Instagram
+              @lcperforms
             </a>
           </li>
         </ul>
