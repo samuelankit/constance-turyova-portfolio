@@ -844,7 +844,7 @@ function SettingsManager() {
     await updateSettings.mutateAsync({ data: current });
     await qc.invalidateQueries({ queryKey: getGetSettingsQueryKey() });
     setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    setTimeout(() => setSaved(false), 4000);
   }
 
   if (isLoading) return <div className="nk-spinner" style={{ margin: "20px auto" }} />;
@@ -852,7 +852,6 @@ function SettingsManager() {
   return (
     <div>
       <p className="nk-admin-section-title">Site Settings</p>
-      {saved && <div className="nk-admin-msg success">Settings saved.</div>}
       <div className="nk-admin-card">
         {(["siteName", "tagline", "email", "instagramUrl", "facebookUrl", "spotlightUrl", "metaDescription", "metaKeywords"] as const).map((key) => (
           <div key={key}>
@@ -864,7 +863,10 @@ function SettingsManager() {
             />
           </div>
         ))}
-        <button className="nk-admin-btn" onClick={handleSave}>Save Settings</button>
+        <button className="nk-admin-btn" onClick={handleSave} disabled={updateSettings.isPending}>
+          {updateSettings.isPending ? "Saving…" : "Save Settings"}
+        </button>
+        {saved && <div className="nk-admin-msg success" style={{ marginTop: 12 }}>✓ Settings saved.</div>}
       </div>
     </div>
   );
